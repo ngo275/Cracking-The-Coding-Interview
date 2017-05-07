@@ -15,7 +15,8 @@ public class Lesson2 {
         //deleteDups(hoge3);
         //deleteNode(hoge4);
         System.out.println(kthToLast(hoge2, 2).data);
-
+        LinkedListNode hoge6 = hoge2.clone();
+        System.out.println(addLists(hoge6, hoge2, 0).next.next.data);
         return;
     }
 
@@ -79,7 +80,7 @@ public class Lesson2 {
 
         while (node != null) {
             LinkedListNode next = node.next;
-            // 並び変えるときは隣との鎖を切る
+            // このように並び変えるときは隣との鎖を切る
             node.next = null;
             if (node.data < x) {
                 if (beforeStart == null) {
@@ -94,7 +95,6 @@ public class Lesson2 {
                     afterStart = node;
                     afterEnd = afterStart;
                 } else {
-                    // 連結リストに重複という感覚はないらしい
                     afterEnd.next = node;
                     afterEnd = node;
                 }
@@ -111,6 +111,90 @@ public class Lesson2 {
         return beforeStart;
     }
 
+    // 2.4 別解
+    // 冷静に4つもリスト持つのはナンセンスだよね、と
+    static LinkedListNode partition2(LinkedListNode node, int x) {
+        LinkedListNode head = node;
+        LinkedListNode tail = node;
+
+        while (node != null) {
+            LinkedListNode next = node.next;
+
+            if (node.data < x) {
+                node.next = head;
+                // headの更新
+                head = node;
+            } else {
+                // node.nextは変える必要なし
+                tail.next = node;
+                // tailの更新
+                tail = node;
+            }
+            node = next;
+        }
+        tail.next = null;
+
+        // 配列を返すわけではなく、単方向なので先頭だけで十分
+        return head;
+    }
+
+    // 2.5
+    // 連結リストで足し算
+    static LinkedListNode addLists(LinkedListNode node1, LinkedListNode node2, int carry) {
+        if (node1 == null && node2 == null && carry == 0) return null;
+
+        LinkedListNode result = new LinkedListNode();
+
+        int value = carry;
+
+        if (node1 != null) {
+            value += node1.data;
+        }
+        if (node2 != null) {
+            value += node2.data;
+        }
+        result.data = value % 10;
+        int nextCarry = value > 9 ? 1 : 0;
+
+        // ここの再帰のイメージは以下のように
+        // result.setNext(addLists(node1.next, node2.next, nextCarry));
+
+        if (node1 != null || node2 != null) {
+            LinkedListNode more = addLists(node1 == null ? null : node1.next, node2 == null ? null : node2.next, nextCarry);
+            result.setNext(more);
+        }
+
+        return result;
+    }
+
+    // 2.6
+    // 回文リストか判別
+    static boolean isPalidrome(LinkedListNode head) {
+        LinkedListNode reversed = reverseAndClone(head);
+        return isEqual(head, reversed);
+    }
+
+    static LinkedListNode reverseAndClone(LinkedListNode node) {
+        LinkedListNode head = null;
+        while (node != null) {
+            LinkedListNode n = new LinkedListNode(node.data);
+            n.next = head;
+            head = n;
+            node = node.next;
+        }
+        return head;
+    }
+
+    static boolean isEqual(LinkedListNode one, LinkedListNode two) {
+        while (one != null && two != null) {
+            if (one.data != two.data) {
+                return false;
+            }
+            one = one.next;
+            two = two.next;
+        }
+        return one == null && two == null;
+    }
 }
 
 
