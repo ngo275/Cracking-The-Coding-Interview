@@ -169,7 +169,7 @@ public class Lesson2 {
 
     // 2.6
     // 回文リストか判別
-    static boolean isPalidrome(LinkedListNode head) {
+    static boolean isPalindrome(LinkedListNode head) {
         LinkedListNode reversed = reverseAndClone(head);
         return isEqual(head, reversed);
     }
